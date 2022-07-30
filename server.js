@@ -33,6 +33,15 @@ passport.deserializeUser(function(id, done){
 
 app.set('view engine', 'ejs');
 
+app.get("/", (req, res, next) => {
+    if(req.isAuthenticated()) return next();
+    //Se muestra esta ruta si ya se inició session
+    res.redirect("/login");
+}, (req,res) => {
+    
+    res.send('Logeado correctamente');
+    //Si no se valida la sesión se redirecciona a /login
+});
 app.get("/login", (req, res) => {
     //Aquí mostramos el formulario de login
     res.render("login");
@@ -41,15 +50,6 @@ app.post("/login", passport.authenticate('local', {
     successRedirect: "/",
     failureRedirect: "/login"
 }));
-app.get("/", (req, res, next) => {
-    if(req.isAuthenticated()) return next();
-
-    res.redirect("/login");
-}, (req,res) => {
-    //Se muestra esta ruta si ya se inició session
-    res.send('Logeado correctamente');
-    //Si no se valida la sesión se redirecciona a /login
-});
 app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}`);
   });
